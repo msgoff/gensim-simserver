@@ -128,7 +128,7 @@ class SimIndex(gensim.utils.SaveLoad):
             try:
                 os.remove(fname)
                 logger.info("deleted %s" % fname)
-            except Exception, e:
+            except Exception as e:
                 logger.warning("failed to delete %s: %s" % (fname, e))
         for val in self.__dict__.keys():
             try:
@@ -673,7 +673,7 @@ class SimServer(object):
                 if os.path.exists(fname):
                     os.remove(fname)
                     logger.info("deleted %s" % fname)
-            except Exception, e:
+            except Exception as e:
                 logger.warning("failed to delete %s" % fname)
         self.payload = SqliteDict(self.location('payload'), autocommit=True, journal_mode=JOURNAL_MODE)
 
@@ -685,7 +685,7 @@ class SimServer(object):
                 if os.path.exists(fname):
                     os.remove(fname)
                     logger.info("deleted %s" % fname)
-            except Exception, e:
+            except Exception as e:
                 logger.warning("failed to delete %s" % fname)
             self.model = None
         self.flush(save_index=True, save_model=True, clear_buffer=True)
@@ -1035,7 +1035,7 @@ class SessionServer(gensim.utils.SaveLoad):
                     delattr(self, val)
                 except:
                     pass
-        except Exception, e:
+        except Exception as e:
             logger.warning("failed to delete SessionServer: %s" % (e))
 
 
