@@ -329,18 +329,24 @@ class SimModel(gensim.utils.SaveLoad):
         self.params = params
         logger.info("collecting %i document ids" % len(fresh_docs))
         docids = fresh_docs.keys()
-        logger.info("creating model from %s documents" % len(docids))
+        len_docids = len(tuple(fresh_docs.keys()))
+        #print(docids)
+        from pudb import set_trace
+        #set_trace()
+        logger.info("creating model from {} documents".format(len_docids))
         preprocessed = lambda: (fresh_docs[docid]['tokens'] for docid in docids)
-
         # create id->word (integer->string) mapping
-        logger.info("creating dictionary from %s documents" % len(docids))
+        logger.info("creating dictionary from {} documents".format(len_docids))
         if dictionary is None:
             dictionary = gensim.corpora.Dictionary(preprocessed())
-            if len(docids) >= 1000:
+            print(dictionary)
+            if len_docids >= 1000:
                 dictionary.filter_extremes(no_below=5, no_above=0.2, keep_n=50000)
             else:
-                logger.warning("training model on only %i documents; is this intentional?" % len(docids))
+                logger.warning("training model on only %i documents; is this intentional?" % len_docids)
                 dictionary.filter_extremes(no_below=0, no_above=1.0, keep_n=50000)
+        print('waka') 
+        print(dictionary)
         self.dictionary = dictionary
 
         class IterableCorpus(object):
@@ -349,17 +355,25 @@ class SimModel(gensim.utils.SaveLoad):
                     yield dictionary.doc2bow(tokens)
 
             def __len__(self):
-                return len(docids)
+                return len(tuple(docids))
         corpus = IterableCorpus()
 
         if method == 'lsi':
             logger.info("training TF-IDF model")
+            print('asdf')
+            print(corpus)
             self.tfidf = gensim.models.TfidfModel(corpus, id2word=self.dictionary)
             logger.info("training LSI model")
             tfidf_corpus = self.tfidf[corpus]
+            print('ddd')
+            print(tfidf_corpus)
             self.lsi = gensim.models.LsiModel(tfidf_corpus, id2word=self.dictionary, **params)
-            self.lsi.projection.u = self.lsi.projection.u.astype(numpy.float32) # use single precision to save mem
-            self.num_features = len(self.lsi.projection.s)
+            print(self.lsi.__dict__)
+            #set_trace()
+            #Returns None Type
+            #self.lsi.projection.u = self.lsi.projection.u.astype(numpy.float32) # use single precision to save mem
+            #Returns None Type
+            #self.num_features = len(self.lsi.projection.s)
         elif method == 'lda_tfidf':
             logger.info("training TF-IDF model")
             self.tfidf = gensim.models.TfidfModel(corpus, id2word=self.dictionary)
