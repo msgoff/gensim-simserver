@@ -331,7 +331,7 @@ class SimModel(gensim.utils.SaveLoad):
         docids = fresh_docs.keys()
         len_docids = len(tuple(fresh_docs.keys()))
         #print(docids)
-        from pudb import set_trace
+        #from pudb import set_trace
         #set_trace()
         logger.info("creating model from {} documents".format(len_docids))
         preprocessed = lambda: (fresh_docs[docid]['tokens'] for docid in docids)
